@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Admin Login — IT Service Requests{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-5">
+    <div class="card shadow border-primary">
+      <div class="card-header bg-primary text-white text-center">
+        <h4 class="mb-0">👔 Admin Login</h4>
+      </div>
+      <div class="card-body">
+
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="/admin/login">
+          <div class="mb-3">
+            <label class="form-label">Manager Email</label>
+            <input name="email" type="email" class="form-control" required
+                   placeholder="manager@corp.com">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input name="password" type="password" class="form-control" required
+                   placeholder="Your password">
+          </div>
+          <button class="btn btn-primary w-100">Login as Manager</button>
+        </form>
+
+        <hr>
+
+        <div class="text-center">
+          <a href="/" class="btn btn-sm btn-outline-secondary">← Back</a>
+        </div>
+
+        <div class="alert alert-info mt-3 mb-0 small">
+          <strong>Admin access is restricted to Managers.</strong>
+          Employees and IT staff should use the <a href="/user/login">User Login</a>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

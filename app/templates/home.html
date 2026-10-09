@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Welcome — IT Service Requests{% endblock %}
+
+{% block content %}
+<div class="text-center mt-5 mb-4">
+  <h1 class="display-5 fw-bold">IT Service Request Management</h1>
+  <p class="lead text-muted">Choose how you want to sign in</p>
+</div>
+
+<div class="row justify-content-center g-4">
+  <!-- ADMIN BLOCK -->
+  <div class="col-md-5">
+    <div class="card shadow h-100 border-primary">
+      <div class="card-body text-center p-5">
+        <div style="font-size: 4rem;">👔</div>
+        <h3 class="mt-3 mb-2">Admin</h3>
+        <p class="text-muted">Managers sign in here to assign tickets, view the whole team's workload, and manage requests.</p>
+        <a href="/admin/login" class="btn btn-primary btn-lg mt-3 w-100">
+          🔐 Admin Login
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER BLOCK -->
+  <div class="col-md-5">
+    <div class="card shadow h-100 border-success">
+      <div class="card-body text-center p-5">
+        <div style="font-size: 4rem;">👥</div>
+        <h3 class="mt-3 mb-2">User</h3>
+        <p class="text-muted">Employees and IT staff sign in or create a new account to raise or work on IT requests.</p>
+        <a href="/user/login" class="btn btn-success btn-lg mt-3 w-100">
+          🔐 User Login
+        </a>
+        <a href="/register" class="btn btn-outline-success mt-2 w-100">
+          ➕ Register New Account
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="text-center mt-5">
+  <small class="text-muted">
+    New users must verify their email with a one-time code (OTP) sent to their inbox.
+  </small>
+</div>
+{% endblock %}

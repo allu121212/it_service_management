@@ -23,6 +23,24 @@ class User(Base):
     email = Column(String(150), unique=True, nullable=False)
     role = Column(String(20), nullable=False, default="employee")
     is_available = Column(Boolean, default=True)
+    password_hash = Column(String(200), nullable=True)
+    must_change_password = Column(Boolean, default=False, nullable=False)
+    is_email_verified = Column(Boolean, default=True, nullable=False)
+    failed_login_attempts = Column(Integer, default=0, nullable=False)
+    is_locked = Column(Boolean, default=False, nullable=False)
+    password_changed_at = Column(DateTime, nullable=True)
+
+
+class PendingRegistration(Base):
+    __tablename__ = "pending_registrations"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    email = Column(String(150), unique=True, nullable=False)
+    role = Column(String(20), nullable=False, default="employee")
+    password_hash = Column(String(200), nullable=False)
+    otp_code = Column(String(6), nullable=False)
+    otp_expires_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 
 class Category(Base):

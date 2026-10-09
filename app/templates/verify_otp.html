@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Verify OTP — IT Service Requests{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-5">
+    <div class="card shadow">
+      <div class="card-header bg-info text-dark text-center">
+        <h4 class="mb-0">📧 Verify Your Email</h4>
+      </div>
+      <div class="card-body">
+
+        <div class="alert alert-info">
+          We've sent a 6-digit code to <strong>{{ email }}</strong>.
+          Enter it below to complete your registration.
+        </div>
+
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="/verify-otp">
+          <input type="hidden" name="email" value="{{ email }}">
+
+          <div class="mb-3">
+            <label class="form-label">6-digit code</label>
+            <input name="otp" type="text" class="form-control form-control-lg text-center"
+                   pattern="[0-9]{6}" maxlength="6" required
+                   placeholder="123456" autofocus>
+            <div class="form-text">The code expires in 15 minutes.</div>
+          </div>
+
+          <button class="btn btn-info w-100">Verify & Create Account</button>
+        </form>
+
+        <hr>
+
+        <div class="text-center small">
+          Didn't receive the code?
+          <a href="/register">Register again</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

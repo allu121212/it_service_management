@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Register — IT Service Requests{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+  <div class="col-md-6">
+    <div class="card shadow">
+      <div class="card-header bg-dark text-white text-center">
+        <h4 class="mb-0">➕ Create New Account</h4>
+      </div>
+      <div class="card-body">
+
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="/register">
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input name="name" type="text" class="form-control" required
+                   placeholder="e.g. Priya Sharma">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input name="email" type="email" class="form-control" required
+                   placeholder="you@corp.com">
+            <div class="form-text">A one-time code (OTP) will be sent to this address.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">I am registering as</label>
+            <select name="role" class="form-select" required>
+              <option value="employee">Employee — raise and track my own requests</option>
+              <option value="it_staff">IT Staff — work on requests assigned to me</option>
+            </select>
+            <div class="form-text">Managers are added by an administrator.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Password (min 8 characters)</label>
+            <input name="password" type="password" class="form-control"
+                   minlength="8" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Confirm Password</label>
+            <input name="confirm_password" type="password" class="form-control"
+                   minlength="8" required>
+          </div>
+
+          <button class="btn btn-dark w-100">Continue → Receive OTP</button>
+        </form>
+
+        <hr>
+
+        <div class="text-center">
+          <a href="/user/login" class="btn btn-sm btn-outline-secondary">Already registered? Login</a>
+          <a href="/" class="btn btn-sm btn-outline-secondary">← Back</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

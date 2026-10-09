@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}User Login — IT Service Requests{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-5">
+    <div class="card shadow border-success">
+      <div class="card-header bg-success text-white text-center">
+        <h4 class="mb-0">👥 User Login</h4>
+      </div>
+      <div class="card-body">
+
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        {% if success %}
+        <div class="alert alert-success">{{ success }}</div>
+        {% endif %}
+
+        <form method="post" action="/user/login">
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input name="email" type="email" class="form-control" required
+                   placeholder="you@corp.com">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input name="password" type="password" class="form-control" required
+                   placeholder="Your password">
+          </div>
+          <button class="btn btn-success w-100">Login</button>
+        </form>
+
+        <hr>
+
+        <div class="text-center">
+          <p class="mb-2 text-muted small">Don't have an account?</p>
+          <a href="/register" class="btn btn-outline-success w-100">➕ Register New Account</a>
+        </div>
+
+        <div class="text-center mt-3">
+          <a href="/" class="btn btn-sm btn-outline-secondary">← Back</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

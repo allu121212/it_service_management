@@ -4,19 +4,13 @@
 {% block content %}
 <h2 class="mb-4">Create New Service Request</h2>
 
+<div class="alert alert-info">
+  Requesting as: <strong>{{ user.name }}</strong> ({{ user.email }})
+</div>
+
 <div class="card">
   <div class="card-body">
     <form method="post" action="/requests/new">
-
-      <div class="mb-3">
-        <label class="form-label">Requester <span class="text-danger">*</span></label>
-        <select name="requester_id" class="form-select" required>
-          <option value="">-- Select employee --</option>
-          {% for u in users %}
-            <option value="{{ u.id }}">{{ u.name }} ({{ u.email }})</option>
-          {% endfor %}
-        </select>
-      </div>
 
       <div class="mb-3">
         <label class="form-label">Subject <span class="text-danger">*</span></label>
@@ -54,7 +48,7 @@
 
       <div class="d-flex gap-2">
         <button type="submit" class="btn btn-success">Create Request</button>
-        <a href="/" class="btn btn-outline-secondary">Cancel</a>
+        <a href="/dashboard" class="btn btn-outline-secondary">Cancel</a>
       </div>
     </form>
   </div>
