@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+         {% extends "base.html" %}
 {% block title %}Dashboard — IT Service Requests{% endblock %}
 
 {% block content %}
@@ -47,7 +47,7 @@
     <a href="/requests/new" class="btn btn-sm btn-success">+ New Request</a>
   </div>
   <div class="table-responsive">
-    <table class="table table-hover mb-0">
+    <table class="table table-hover mb-0 align-middle">
       <thead class="table-light">
         <tr>
           <th>ID</th>
@@ -96,6 +96,9 @@
               <span class="badge bg-primary">{{ row.sla.state }}</span>
             {% else %}
               <span class="badge bg-success">{{ row.sla.state }}</span>
+            {% endif %}
+            {% if row.sla.human %}
+              <div class="small text-muted">{{ row.sla.human }}</div>
             {% endif %}
           </td>
           <td><a href="/requests/{{ row.r.id }}" class="btn btn-sm btn-outline-primary">View</a></td>

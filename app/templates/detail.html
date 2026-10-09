@@ -38,7 +38,10 @@
   {% else %}
     <span class="badge bg-success">SLA: {{ sla.state }}</span>
   {% endif %}
-  <span class="text-muted small">Deadline: {{ sla.deadline.strftime('%Y-%m-%d %H:%M') }}</span>
+  {% if sla.human %}
+    <span class="text-danger small fw-bold ms-1">{{ sla.human }}</span>
+  {% endif %}
+  <span class="text-muted small ms-2">Deadline: {{ sla.deadline.strftime('%Y-%m-%d %H:%M') }}</span>
 </div>
 
 <div class="row">
