@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% block title %}Request #{{ r.id }} — IT Service Requests{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <div>
+    <h2 class="mb-1">#{{ r.id }} — {{ r.subject }}</h2>
+    <div class="text-muted small">
+      Created: {{ r.created_at.strftime('%Y-%m-%d %H:%M') }} |
+      Requester ID: {{ r.requester_id }} |
+      Category: {{ category.name }}
+    </div>
+  </div>
+  <div>
+    {% if r.status.value == 'CLOSED' %}
+      <span class="badge bg-dark fs-6">{{ r.status.value }}</span>
+    {% elif r.status.value == 'RESOLVED' %}
+      <span class="badge bg-primary fs-6">{{ r.status.value }}</span>
+    {% elif r.status.value == 'ON_HOLD' %}
+      <span class="badge bg-warning text-dark fs-6">{{ r.status.value }}</span>
+    {% else %}
+      <span class="badge bg-info text-dark fs-6">{{ r.status.value }}</span>
+    {% endif %}
+  </div>
+</div>
+
+<!-- SLA + Priority badges -->
+<div class="mb-3">
+  <span class="badge bg-secondary">Priority: {{ priority.name }} ({{ priority.sla_hours }}h SLA)</span>
+  {% if sla.state == 'BREACHED' %}
+    <span class="badge bg-danger">SLA: {{ sla.state }}</span>
+  {% elif sla.state == 'APPROACHING' %}
+    <span class="badge bg-warning text-dark">SLA: {{ sla.state }}</span>
+  {% elif sla.state == 'RESOLVED_WITHIN_SLA' %}
+    <span class="badge bg-primary">SLA: {{ sla.state }}</span>
+  {% else %}
+    <span class="badge bg-success">SLA: {{ sla.state }}</span>
+  {% endif %}
+  <span class="text-muted small">Deadline: {{ sla.deadline.strftime('%Y-%m-%d %H:%M') }}</span>
+</div>
+
+<div class="row">
+  <!-- LEFT: Details + Actions -->
+  <div class="col-md-7">
+
+    <!-- Description -->
+    <div class="card mb-3">
+      <div class="card-header"><strong>Description</strong></div>
+      <div class="card-body">
+        <p class="mb-0" style="white-space: pre-wrap;">{{ r.description }}</p>
+      </div>
+    </div>
+
+    <!-- Resolution (if resolved) -->
+    {% if r.resolution_details %}
+    <div class="card mb-3 border-primary">
+      <div class="card-header bg-primary text-white"><strong>Resolution</strong></div>
+      <div class="card-body">
+        <p class="mb-1">{{ r.resolution_details }}</p>
+        <div class="text-muted small">
+          Resolved at: {{ r.resolved_at.strftime('%Y-%m-%d %H:%M') if r.resolved_at else '—' }}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Actions (only if not CLOSED) -->
+    {% if r.status.value != 'CLOSED' %}
+    <div class="card mb-3">
+      <div class="card-header"><strong>Actions</strong></div>
+      <div class="card-body">
+
+        <!-- Assign -->
+        <form method="post" action="/requests/{{ r.id }}/assign" class="row g-2 mb-3">
+          <div class="col-md-6">
+            <label class="form-label small">Assign to IT staff</label>
+            <select name="assignee_id" class="form-select form-select-sm" required>
+              <option value="">-- Select IT member --</option>
+              {% for u in it_users %}
+                <option value="{{ u.id }}" {% if r.assignee_id == u.id %}selected{% endif %}>
+                  {{ u.name }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small">Acting as (ID)</label>
+            <input name="actor_id" class="form-control form-control-sm" value="{{ r.assignee_id or 3 }}" required>
+          </div>
+          <div class="col-md-3 d-flex align-items-end">
+            <button class="btn btn-sm btn-primary w-100">Assign</button>
+          </div>
+        </form>
+
+        <hr>
+
+        <!-- Change status -->
+        <form method="post" action="/requests/{{ r.id }}/status" class="row g-2 mb-3">
+          <div class="col-md-6">
+            <label class="form-label small">Change status</label>
+            <select name="status" class="form-select form-select-sm" required>
+              <option value="ASSIGNED">ASSIGNED</option>
+              <option value="IN_PROGRESS">IN_PROGRESS</option>
+              <option value="ON_HOLD">ON_HOLD</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small">Acting as (ID)</label>
+            <input name="actor_id" class="form-control form-control-sm" value="3" required>
+          </div>
+          <div class="col-md-3 d-flex align-items-end">
+            <button class="btn btn-sm btn-warning w-100">Update Status</button>
+          </div>
+        </form>
+
+        <hr>
+
+        <!-- Resolve -->
+        <form method="post" action="/requests/{{ r.id }}/resolve" class="row g-2 mb-3">
+          <div class="col-md-9">
+            <label class="form-label small">Resolution details <span class="text-danger">*</span></label>
+            <textarea name="resolution_details" class="form-control form-control-sm" rows="2"
+                      placeholder="What was done?" required></textarea>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small">Acting as (ID)</label>
+            <input name="actor_id" class="form-control form-control-sm" value="3" required>
+            <button class="btn btn-sm btn-success w-100 mt-2">Resolve</button>
+          </div>
+        </form>
+
+        <hr>
+
+        <!-- Close (only if RESOLVED) -->
+        {% if r.status.value == 'RESOLVED' %}
+        <form method="post" action="/requests/{{ r.id }}/close" class="row g-2">
+          <div class="col-md-9">
+            <label class="form-label small">Close this resolved request</label>
+            <input name="actor_id" class="form-control form-control-sm" value="3" placeholder="Acting as (ID)">
+          </div>
+          <div class="col-md-3 d-flex align-items-end">
+            <button class="btn btn-sm btn-dark w-100">Close Request</button>
+          </div>
+        </form>
+        {% endif %}
+
+      </div>
+    </div>
+    {% else %}
+    <div class="alert alert-secondary">
+      This request is <strong>CLOSED</strong>. No further modifications are allowed.
+    </div>
+    {% endif %}
+
+    <!-- Add comment -->
+    <div class="card mb-3">
+      <div class="card-header"><strong>Add Comment</strong></div>
+      <div class="card-body">
+        <form method="post" action="/requests/{{ r.id }}/comments" class="row g-2">
+          <div class="col-md-9">
+            <textarea name="comment" class="form-control form-control-sm" rows="2" required
+                      placeholder="Add an update..."></textarea>
+          </div>
+          <div class="col-md-3">
+            <input name="author_id" class="form-control form-control-sm" value="3" placeholder="Your user ID">
+            <button class="btn btn-sm btn-outline-primary w-100 mt-2">Post Comment</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: History + Comments -->
+  <div class="col-md-5">
+    <div class="card mb-3">
+      <div class="card-header"><strong>History</strong></div>
+      <ul class="list-group list-group-flush">
+        {% for h in history %}
+        <li class="list-group-item">
+          <div class="d-flex justify-content-between">
+            <strong class="small">{{ h.event_type }}</strong>
+            <small class="text-muted">{{ h.timestamp.strftime('%m-%d %H:%M') }}</small>
+          </div>
+          {% if h.old_value or h.new_value %}
+            <div class="small text-muted">
+              {% if h.old_value %}{{ h.old_value }} → {% endif %}{{ h.new_value }}
+            </div>
+          {% endif %}
+          <div class="small text-muted">by user #{{ h.actor_id or '—' }}</div>
+        </li>
+        {% else %}
+        <li class="list-group-item text-muted">No history yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><strong>Comments</strong></div>
+      <ul class="list-group list-group-flush">
+        {% for c in comments %}
+        <li class="list-group-item">
+          <div class="small text-muted">User #{{ c.author_id }} — {{ c.created_at.strftime('%m-%d %H:%M') }}</div>
+          <div>{{ c.comment }}</div>
+        </li>
+        {% else %}
+        <li class="list-group-item text-muted">No comments yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<a href="/" class="btn btn-outline-secondary mt-3">← Back to Dashboard</a>
+{% endblock %}
